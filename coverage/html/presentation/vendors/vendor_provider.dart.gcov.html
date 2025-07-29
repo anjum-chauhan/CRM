@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - presentation/vendors/vendor_provider.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory presentation/vendors">presentation/vendors</a> - vendor_provider.dart</td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">87.5&nbsp;%</td>
+            <td class="headerCovTableEntry">40</td>
+            <td class="headerCovTableEntry">35</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2025-07-24 22:53:32</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : import 'package:flutter_riverpod/flutter_riverpod.dart';</span>
+<span id="L2"><span class="lineNum">       2</span>              : import '../../../data/repository/vendor_repository.dart';</span>
+<span id="L3"><span class="lineNum">       3</span>              : import '../../core/storage/hive_storage_provider.dart';</span>
+<span id="L4"><span class="lineNum">       4</span>              : import '../../../data/services/vendor_service.dart';</span>
+<span id="L5"><span class="lineNum">       5</span>              : import '../../../data/models/vendor.dart';</span>
+<span id="L6"><span class="lineNum">       6</span>              : </span>
+<span id="L7"><span class="lineNum">       7</span>              : /// SECTION 1: Repository Providers</span>
+<span id="L8"><span class="lineNum">       8</span>              : </span>
+<span id="L9"><span class="lineNum">       9</span>              : /// Service provider for vendor data</span>
+<span id="L10"><span class="lineNum">      10</span> <span class="tlaUNC">           0 : final vendorServiceProvider = Provider((ref) =&gt; VendorService());</span></span>
+<span id="L11"><span class="lineNum">      11</span>              : </span>
+<span id="L12"><span class="lineNum">      12</span>              : /// Vendor repository provider that combines service and storage</span>
+<span id="L13"><span class="lineNum">      13</span> <span class="tlaGNC">           9 : final vendorRepoProvider = Provider((ref) {</span></span>
+<span id="L14"><span class="lineNum">      14</span> <span class="tlaUNC">           0 :   final vendorService = ref.watch(vendorServiceProvider);</span></span>
+<span id="L15"><span class="lineNum">      15</span> <span class="tlaUNC">           0 :   final localStorage = ref.watch(localStorageRepositoryProvider);</span></span>
+<span id="L16"><span class="lineNum">      16</span> <span class="tlaUNC">           0 :   return VendorRepository(vendorService, localStorage);</span></span>
+<span id="L17"><span class="lineNum">      17</span>              : });</span>
+<span id="L18"><span class="lineNum">      18</span>              : </span>
+<span id="L19"><span class="lineNum">      19</span>              : /// SECTION 2: Vendor List Management</span>
+<span id="L20"><span class="lineNum">      20</span>              : </span>
+<span id="L21"><span class="lineNum">      21</span>              : /// Provides the combined list of vendors with favorites first</span>
+<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">           8 : final vendorListProvider = FutureProvider&lt;List&lt;Vendor&gt;&gt;((ref) async {</span></span>
+<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">           4 :   final repo = ref.watch(vendorRepoProvider);</span></span>
+<span id="L24"><span class="lineNum">      24</span>              :   </span>
+<span id="L25"><span class="lineNum">      25</span>              :   // Fetch both remote and local data</span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">           2 :   final vendors = await repo.getVendors();</span></span>
+<span id="L27"><span class="lineNum">      27</span> <span class="tlaGNC">           2 :   final favorites = repo.getFavoriteVendors();</span></span>
+<span id="L28"><span class="lineNum">      28</span>              :   </span>
+<span id="L29"><span class="lineNum">      29</span>              :   // Create a Set of favorite IDs for efficient lookup</span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">           4 :   final favoriteIds = favorites.map((v) =&gt; v.vendorId).toSet();</span></span>
+<span id="L31"><span class="lineNum">      31</span>              :   </span>
+<span id="L32"><span class="lineNum">      32</span>              :   // Filter out vendors that are already in favorites</span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">           2 :   final nonFavorites = vendors.where(</span></span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">           6 :     (vendor) =&gt; !favoriteIds.contains(vendor.vendorId)</span></span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">           2 :   ).toList();</span></span>
+<span id="L36"><span class="lineNum">      36</span>              :   </span>
+<span id="L37"><span class="lineNum">      37</span>              :   // Return combined list with favorites first</span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">           4 :   return [...favorites, ...nonFavorites];</span></span>
+<span id="L39"><span class="lineNum">      39</span>              : });</span>
+<span id="L40"><span class="lineNum">      40</span>              : </span>
+<span id="L41"><span class="lineNum">      41</span>              : /// SECTION 3: Search Functionality</span>
+<span id="L42"><span class="lineNum">      42</span>              : </span>
+<span id="L43"><span class="lineNum">      43</span>              : /// Stores the current search query</span>
+<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">           8 : final searchQueryProvider = StateProvider&lt;String&gt;((ref) =&gt; '');</span></span>
+<span id="L45"><span class="lineNum">      45</span>              : </span>
+<span id="L46"><span class="lineNum">      46</span>              : /// Provides a filtered list of vendors based on the search query</span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">           8 : final filteredVendorsProvider = Provider&lt;List&lt;Vendor&gt;&gt;((ref) {</span></span>
+<span id="L48"><span class="lineNum">      48</span> <span class="tlaGNC">           6 :   final query = ref.watch(searchQueryProvider).toLowerCase();</span></span>
+<span id="L49"><span class="lineNum">      49</span> <span class="tlaGNC">           4 :   final asyncValue = ref.watch(vendorListProvider);</span></span>
+<span id="L50"><span class="lineNum">      50</span>              :   </span>
+<span id="L51"><span class="lineNum">      51</span> <span class="tlaGNC">           2 :   return asyncValue.when(</span></span>
+<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">           2 :     data: (vendors) =&gt; vendors</span></span>
+<span id="L53"><span class="lineNum">      53</span> <span class="tlaGNC">           2 :         .where(</span></span>
+<span id="L54"><span class="lineNum">      54</span> <span class="tlaGNC">           2 :         (vendor) {</span></span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">           6 :           return vendor.name.toLowerCase().contains(query) ||</span></span>
+<span id="L56"><span class="lineNum">      56</span> <span class="tlaGNC">           6 :               vendor.category.toLowerCase().contains(query) ||</span></span>
+<span id="L57"><span class="lineNum">      57</span> <span class="tlaGNC">           6 :               vendor.location.toLowerCase().contains(query);</span></span>
+<span id="L58"><span class="lineNum">      58</span> <span class="tlaGNC">           2 :         }).toList(),</span></span>
+<span id="L59"><span class="lineNum">      59</span> <span class="tlaGNC">           2 :     loading: () =&gt; [],</span></span>
+<span id="L60"><span class="lineNum">      60</span> <span class="tlaUNC">           0 :     error: (_, __) =&gt; [],</span></span>
+<span id="L61"><span class="lineNum">      61</span>              :   );</span>
+<span id="L62"><span class="lineNum">      62</span>              : });</span>
+<span id="L63"><span class="lineNum">      63</span>              : </span>
+<span id="L64"><span class="lineNum">      64</span>              : /// SECTION 4: Favorites Management</span>
+<span id="L65"><span class="lineNum">      65</span>              : </span>
+<span id="L66"><span class="lineNum">      66</span>              : /// Manages favorite vendors state and operations</span>
+<span id="L67"><span class="lineNum">      67</span> <span class="tlaGNC">           8 : final favoriteVendorsProvider = StateNotifierProvider&lt;FavoriteVendorsNotifier, List&lt;Vendor&gt;&gt;((ref) {</span></span>
+<span id="L68"><span class="lineNum">      68</span> <span class="tlaGNC">           4 :   final repo = ref.watch(vendorRepoProvider);</span></span>
+<span id="L69"><span class="lineNum">      69</span> <span class="tlaGNC">           2 :   return FavoriteVendorsNotifier(repo);</span></span>
+<span id="L70"><span class="lineNum">      70</span>              : });</span>
+<span id="L71"><span class="lineNum">      71</span>              : </span>
+<span id="L72"><span class="lineNum">      72</span>              : /// Notifier class that handles favorite vendor operations</span>
+<span id="L73"><span class="lineNum">      73</span>              : class FavoriteVendorsNotifier extends StateNotifier&lt;List&lt;Vendor&gt;&gt; {</span>
+<span id="L74"><span class="lineNum">      74</span>              :   final VendorRepository _repository;</span>
+<span id="L75"><span class="lineNum">      75</span>              :   </span>
+<span id="L76"><span class="lineNum">      76</span> <span class="tlaGNC">           6 :   FavoriteVendorsNotifier(this._repository) : super([]) {</span></span>
+<span id="L77"><span class="lineNum">      77</span> <span class="tlaGNC">           6 :     state = _repository.getFavoriteVendors();</span></span>
+<span id="L78"><span class="lineNum">      78</span>              :   }</span>
+<span id="L79"><span class="lineNum">      79</span>              : </span>
+<span id="L80"><span class="lineNum">      80</span>              :   /// Toggles the favorite status of a vendor and updates both local storage and state</span>
+<span id="L81"><span class="lineNum">      81</span> <span class="tlaGNC">           1 :   Future&lt;void&gt; toggleFavorite(Vendor vendor) async {</span></span>
+<span id="L82"><span class="lineNum">      82</span> <span class="tlaGNC">           3 :     if (_repository.isFavorite(vendor.vendorId)) {</span></span>
+<span id="L83"><span class="lineNum">      83</span> <span class="tlaGNC">           3 :       await _repository.removeFromFavorites(vendor.vendorId);</span></span>
+<span id="L84"><span class="lineNum">      84</span> <span class="tlaGNC">           8 :       state = state.where((v) =&gt; v.vendorId != vendor.vendorId).toList();</span></span>
+<span id="L85"><span class="lineNum">      85</span>              :     } else {</span>
+<span id="L86"><span class="lineNum">      86</span> <span class="tlaGNC">           2 :       await _repository.addToFavorites(vendor);</span></span>
+<span id="L87"><span class="lineNum">      87</span> <span class="tlaGNC">           4 :       state = [...state, vendor];</span></span>
+<span id="L88"><span class="lineNum">      88</span>              :     }</span>
+<span id="L89"><span class="lineNum">      89</span>              :   }</span>
+<span id="L90"><span class="lineNum">      90</span>              : </span>
+<span id="L91"><span class="lineNum">      91</span>              :   /// Checks if a vendor is marked as favorite</span>
+<span id="L92"><span class="lineNum">      92</span> <span class="tlaGNC">           3 :   bool isFavorite(int vendorId) =&gt; _repository.isFavorite(vendorId);</span></span>
+<span id="L93"><span class="lineNum">      93</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.3.1-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>
