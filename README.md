@@ -64,7 +64,7 @@ lib/
 
 1. Clone the repo  
    ```bash
-   git clone https://github.com/your-username/vendor-management-system.git
+   git clone https://github.com/anjum-chauhan/CRM.git
    ```
 
 2. Install dependencies  
@@ -82,10 +82,6 @@ lib/
 ```bash
 flutter test
 ```
-
-## Screenshots
-
-*(Include a few images of your app here to show the UI)*
 
 ## About the Author
 
